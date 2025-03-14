@@ -33,7 +33,7 @@ namespace BveEx.Setup.Models
 
         public void GetLatest()
         {
-            Process.Start("https://www.okaoka-depot.com/AtsEX/");
+            Process.Start("https://bveex.okaoka-depot.com");
             Application.Current.Shutdown();
         }
 
