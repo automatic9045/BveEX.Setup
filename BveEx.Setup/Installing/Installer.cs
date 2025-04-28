@@ -6,8 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Vanara.PInvoke;
-
 namespace BveEx.Setup.Installing
 {
     internal class Installer : IDisposable
@@ -189,8 +187,17 @@ namespace BveEx.Setup.Installing
                 {
                     StateReporter.Report(new InstallationState(400, "シナリオフォルダに配置されている既存の BveEX サンプルシナリオのバックアップを作成しています..."));
 
-                    ZipFile.CreateFromDirectory(sampleDirectory, FileNamer.CreateFilePathInSequence(sampleDirectory + "_old.zip"));
-                    Directory.Delete(sampleDirectory, true);
+                    string backupPath = FileNamer.CreateFilePathInSequence(sampleDirectory + "_old.zip");
+                    ZipFile.CreateFromDirectory(sampleDirectory, backupPath);
+
+                    string basicMapDirectory = Path.Combine(sampleDirectory, @"Maps\Basic");
+                    if (Directory.Exists(basicMapDirectory)) Directory.Delete(basicMapDirectory, true);
+
+                    string basicThumbnailDirectory = Path.Combine(sampleDirectory, @"Thumbnails\Basic");
+                    if (Directory.Exists(basicThumbnailDirectory)) Directory.Delete(basicThumbnailDirectory, true);
+
+                    string basicVehicleDirectory = Path.Combine(sampleDirectory, @"Vehicles\Basic");
+                    if (Directory.Exists(basicVehicleDirectory)) Directory.Delete(basicVehicleDirectory, true);
                 }
 
                 StateReporter.Report(new InstallationState(420, "BveEX サンプルシナリオを展開・配置しています..."));
@@ -198,7 +205,6 @@ namespace BveEx.Setup.Installing
                 ArchivedPackage archive = ArchivedPackage.FromResource($"{Namespace}.Scenarios.zip");
                 archive.ExtractAndLocate(TargetPath.ScenarioDirectory.Value.Path);
 
-                Task.Delay(DelayMilliseconds).Wait();
                 TargetPath.ScenarioDirectory.Value.MarkAsInstalled();
             }
 
